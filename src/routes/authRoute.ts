@@ -1,25 +1,44 @@
 import { Router } from "express";
-import { generateToken, prisma } from "./../utils/config";
+import { generateToken, initConfig, prisma } from "./../utils/config";
 
-const authRouter = Router();
+export const authRouter = Router();
 
 // Login
 authRouter.post("/login", async (req, res, next) => {
-  const { username, password }: { username?: String; password?: string } =
+  const { username, password }: { username?: string; password?: string } =
     req.body;
   if (!username || !password) {
-    return res.status(400).send({ message: "Invalid username or password" });
+    return res.status(400).send({ message: "Invalid your form data" });
   }
-  const ex = new Date(Date.now() + 36000);
-  return res
-    .cookie("access_token", "token 2", {
-      expires: ex,
-      httpOnly: true,
-    })
-    .status(200)
-    .send({
-      message: "Login Success!",
+  try {
+    const exist = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { username: username.toLocaleLowerCase() },
+          {
+            email: username.toLocaleLowerCase(),
+          },
+        ],
+      },
     });
+    if (!exist || exist.password !== password) {
+      return res.status(400).send({ message: "Invalid username or password" });
+    }
+    const token = generateToken(exist.email);
+    res
+      .cookie("access_token", token, {
+        expires: initConfig.loginExpiresIn,
+        httpOnly: true,
+      })
+      .status(200)
+      .send({
+        token: token,
+        user: exist,
+        message: "Signup Success!",
+      });
+  } catch (error) {
+    next(error);
+  }
 });
 
 // Sign up with Google and Credentials
@@ -61,7 +80,7 @@ authRouter.post("/signup", async (req, res, next) => {
     const token = generateToken(email);
     res
       .cookie("access_token", token, {
-        maxAge: 10000,
+        expires: initConfig.loginExpiresIn,
         httpOnly: true,
       })
       .status(200)
@@ -74,4 +93,3 @@ authRouter.post("/signup", async (req, res, next) => {
     next(error);
   }
 });
-export { authRouter };

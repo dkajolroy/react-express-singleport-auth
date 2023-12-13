@@ -5,7 +5,6 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { toastError, toastSuccess } from "../config/toast";
-import { config } from "../constants/config";
 import { signInSuccess } from "../slices/authSlice";
 
 export default function LoginPage() {
@@ -26,16 +25,11 @@ export default function LoginPage() {
     setIsLoading((s) => !s);
     const id = toast.loading("Please wait...");
     try {
-      const res = await axios.post(
-        `${config.baseApiUrl}/api/auth/login`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        }
-      );
+      const res = await axios.post(`/api/auth/login`, formData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       if (res.status === 200) {
         dispatch(signInSuccess(res.data));
         toastSuccess(id, res.data.message);

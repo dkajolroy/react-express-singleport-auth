@@ -1,4 +1,4 @@
 export const config = {
-  baseApiUrl: "http://localhost:5000",
+  // baseApiUrl: "http://localhost:5000",
   appName: "total-auth-react",
 };
