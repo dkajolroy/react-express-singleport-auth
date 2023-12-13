@@ -10,28 +10,16 @@ authRouter.post("/login", async (req, res, next) => {
   if (!username || !password) {
     return res.status(400).send({ message: "Invalid username or password" });
   }
-  try {
-    const user = await prisma.user.findFirst({
-      where: {
-        OR: [
-          { username: username.toLowerCase() },
-          { email: username.toLowerCase() },
-        ],
-      },
-    });
-    if (!user) {
-      return res.status(401).send({ message: "User not found !" });
-    }
-
-    const token = generateToken(user.email);
-    res.status(200).send({
-      token: token,
-      user,
+  const ex = new Date(Date.now() + 36000);
+  return res
+    .cookie("access_token", "token 2", {
+      expires: ex,
+      httpOnly: true,
+    })
+    .status(200)
+    .send({
       message: "Login Success!",
     });
-  } catch (error) {
-    next(error);
-  }
 });
 
 // Sign up with Google and Credentials
@@ -71,11 +59,17 @@ authRouter.post("/signup", async (req, res, next) => {
       },
     });
     const token = generateToken(email);
-    res.status(200).send({
-      token: token,
-      user,
-      message: "Signup Success!",
-    });
+    res
+      .cookie("access_token", token, {
+        maxAge: 10000,
+        httpOnly: true,
+      })
+      .status(200)
+      .send({
+        token: token,
+        user,
+        message: "Signup Success!",
+      });
   } catch (error) {
     next(error);
   }
