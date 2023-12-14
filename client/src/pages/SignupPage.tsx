@@ -2,8 +2,9 @@ import axios from "axios";
 import React, { useState } from "react";
 import { ImSpinner2 } from "react-icons/im";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import Oauth from "../components/Oauth";
 import { toastError, toastSuccess } from "../config/toast";
 import { signInSuccess } from "../slices/authSlice";
 
@@ -89,6 +90,11 @@ export default function SignupPage() {
             "Login"
           )}
         </button>
+        <Oauth />
+        <Link to="/login">
+          Already have an account to
+          <span className="text-blue-500"> Login</span>
+        </Link>
       </form>
     </div>
   );
