@@ -32,7 +32,7 @@ export default function LoginPage() {
         },
       });
       if (res.status === 200) {
-        dispatch(signInSuccess(res.data));
+        dispatch(signInSuccess(res.data.user));
         toastSuccess(id, res.data.message);
         setIsLoading(false);
         navigate("/");

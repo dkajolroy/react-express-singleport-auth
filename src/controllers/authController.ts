@@ -32,7 +32,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
       .send({
         token: token,
         user: exist,
-        message: "Signup Success!",
+        message: "Login Success!",
       });
   } catch (error) {
     next(error);
