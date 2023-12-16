@@ -8,8 +8,8 @@ import { userRouter } from "./routes/userRoute";
 dotenv.config();
 const app = express();
 app.use(express.json());
-app.use(cookiePerser());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookiePerser());
 
 // config react
 app.use(express.static(path.join(path.resolve(), "/client/dist")));
