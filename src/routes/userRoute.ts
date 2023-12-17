@@ -12,3 +12,6 @@ userRouter.post("/profile", authentication, (req: Request, res: Response) => {
     .status(200)
     .send({ message: "Success!" });
 });
+userRouter.get("/profile", authentication, (req: Request, res: Response) => {
+  res.status(200).send({ message: "Proifle Get!" });
+});
